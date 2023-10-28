@@ -9,6 +9,15 @@ public class PlayerMovement : MonoBehaviour
 
     public float groundDrag;
 
+    public float jumpForce;
+    public float jumpCooldown;
+    public float airMultiplier;
+    bool readyToJump = true;
+
+    [Header("Keybins")]
+    public KeyCode jumpKey = KeyCode.Space;
+
+
     [Header("Ground Check")]
     public float PlayerHeight;
     public LayerMask WhatIsGround;
@@ -51,16 +60,34 @@ public class PlayerMovement : MonoBehaviour
 
     private void MyInput()
     {
+        //이동
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
+
+        // 점프
+        if(Input.GetKey(jumpKey) && readyToJump && grounded)
+        {
+            readyToJump = false;
+
+            Jump();
+
+            Invoke(nameof(ResetJump), jumpCooldown);
+        }
     }
 
     private void MovePlayer()
     {
         // 이동 방향 계산
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        
 
-        rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+        // 지상
+        if(grounded)
+            rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+
+        // 하늘
+        else if(!grounded)
+            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
     }
 
     private void SpeedCountrol()
@@ -68,10 +95,24 @@ public class PlayerMovement : MonoBehaviour
         Vector3 flatVal = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
         // 필요한 경우 속도 제한
-        if(flatVal.magnitude > moveSpeed)
+        if (flatVal.magnitude > moveSpeed)
         {
             Vector3 limitedVel = flatVal.normalized * moveSpeed;
             rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
         }
+    }
+
+    private void Jump()
+    {
+        // y 벨로시티 초기화
+
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+    }
+
+    private void ResetJump()
+    {
+        readyToJump = true;
     }
 }
