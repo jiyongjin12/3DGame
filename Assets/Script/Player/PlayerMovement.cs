@@ -35,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
         grounded = Physics.Raycast(transform.position, Vector3.down, PlayerHeight * 0.5f + 0.2f, WhatIsGround);
 
         MyInput();
+        SpeedCountrol();
 
         // handle drag( 헨들 드리그 )
         if (grounded)
@@ -60,5 +61,17 @@ public class PlayerMovement : MonoBehaviour
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
         rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+    }
+
+    private void SpeedCountrol()
+    {
+        Vector3 flatVal = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+        // 필요한 경우 속도 제한
+        if(flatVal.magnitude > moveSpeed)
+        {
+            Vector3 limitedVel = flatVal.normalized * moveSpeed;
+            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+        }
     }
 }
