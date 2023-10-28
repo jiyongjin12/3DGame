@@ -34,6 +34,10 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask WhatIsGround;
     bool grounded;
 
+    [Header("Slope Handling")]
+    public float maxSlopeAngle;
+    private RaycastHit slopeHit;
+
     public Transform orientation;
 
     float horizontalInput;
@@ -119,7 +123,6 @@ public class PlayerMovement : MonoBehaviour
         // 앉기
         if(Input.GetKey(crouchKey))
         {
-            Debug.Log(crouchSpeed);
             state = MovementState.crouching;
             moveSpeed = crouchSpeed;
         }
@@ -142,6 +145,10 @@ public class PlayerMovement : MonoBehaviour
             state = MovementState.air;
         }
 
+
+        // 경사면에선 중력값 끄기
+        //rb.useGravity = !OnSlope();
+
     }
 
     private void MovePlayer()
@@ -149,6 +156,11 @@ public class PlayerMovement : MonoBehaviour
         // 이동 방향 계산
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
         
+        // 경사
+        if (OnSlope())
+        {
+            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
+        }
 
         // 지상
         if(grounded)
@@ -183,5 +195,21 @@ public class PlayerMovement : MonoBehaviour
     private void ResetJump()
     {
         readyToJump = true;
+    }
+
+    private bool OnSlope() // 경사길 확인 레이케스트
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, PlayerHeight * 0.5f + 0.3f))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            return angle < maxSlopeAngle && angle != 0;
+        }
+
+        return false;
+    }
+
+    private Vector3 GetSlopeMoveDirection()
+    {
+        return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
     }
 }
