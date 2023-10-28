@@ -37,6 +37,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Slope Handling")]
     public float maxSlopeAngle;
     private RaycastHit slopeHit;
+    private bool exitingSlope;
+
+
 
     public Transform orientation;
 
@@ -147,7 +150,7 @@ public class PlayerMovement : MonoBehaviour
 
 
         // 경사면에선 중력값 끄기
-        //rb.useGravity = !OnSlope();
+        rb.useGravity = !OnSlope();
 
     }
 
@@ -157,9 +160,12 @@ public class PlayerMovement : MonoBehaviour
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
         
         // 경사
-        if (OnSlope())
+        if (OnSlope() && !exitingSlope)
         {
             rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
+
+            if (rb.velocity.y > 0)
+                rb.AddForce(Vector3.down * 80f, ForceMode.Force);
         }
 
         // 지상
@@ -173,18 +179,31 @@ public class PlayerMovement : MonoBehaviour
 
     private void SpeedCountrol()
     {
-        Vector3 flatVal = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
-        // 필요한 경우 속도 제한
-        if (flatVal.magnitude > moveSpeed)
+        // 경사에서 속도 제한
+        if (OnSlope() && !exitingSlope)
         {
-            Vector3 limitedVel = flatVal.normalized * moveSpeed;
-            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+            if (rb.velocity.magnitude > moveSpeed)
+                rb.velocity = rb.velocity.normalized * moveSpeed;
+        } 
+
+        // 지상이나 공중에서 최대 속도 재한
+        else
+        {
+            Vector3 flatVal = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+            // 필요한 경우 속도 제한
+            if (flatVal.magnitude > moveSpeed)
+            {
+                Vector3 limitedVel = flatVal.normalized * moveSpeed;
+                rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+            }
         }
     }
 
     private void Jump()
     {
+        exitingSlope = true;
+
         // y 벨로시티 초기화
 
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
@@ -195,6 +214,8 @@ public class PlayerMovement : MonoBehaviour
     private void ResetJump()
     {
         readyToJump = true;
+
+        exitingSlope = false;
     }
 
     private bool OnSlope() // 경사길 확인 레이케스트
