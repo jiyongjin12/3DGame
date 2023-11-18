@@ -185,7 +185,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (rb.velocity.magnitude > moveSpeed)
                 rb.velocity = rb.velocity.normalized * moveSpeed;
-        } 
+        }
 
         // 지상이나 공중에서 최대 속도 재한
         else
