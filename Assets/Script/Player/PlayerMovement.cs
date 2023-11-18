@@ -9,6 +9,13 @@ public class PlayerMovement : MonoBehaviour
     private float moveSpeed;
     public float walkSpeed;
     public float sprintSpeed;
+    public float slideSpeed;
+
+    private float desiredMoveSpeed;
+    private float lastDesiredMoveSpeed;
+
+    public float speedIncreaseMultiplier;
+    public float slopeIncreaseMultiplier;
 
     public float groundDrag;
 
@@ -58,8 +65,11 @@ public class PlayerMovement : MonoBehaviour
         walking,
         sprinting,
         crouching,
+        sliding,
         air
     }
+
+    public bool sliding;
 
     private void Start()
     {
@@ -73,6 +83,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log(desiredMoveSpeed);
+
         // 바닥 체크
         grounded = Physics.Raycast(transform.position, Vector3.down, PlayerHeight * 0.5f + 0.2f, WhatIsGround);
 
@@ -124,24 +136,36 @@ public class PlayerMovement : MonoBehaviour
 
     private void StateHandler()
     {
+        // 슬라이딩
+        if(sliding)
+        {
+            state = MovementState.sliding;
+
+            if (OnSlope() && rb.velocity.y < 0.1f)
+                desiredMoveSpeed = slideSpeed;
+
+            else
+                desiredMoveSpeed = sprintSpeed;
+        }
+
         // 앉기
-        if(Input.GetKey(crouchKey))
+        else if(Input.GetKey(crouchKey))
         {
             state = MovementState.crouching;
-            moveSpeed = crouchSpeed;
+            desiredMoveSpeed = crouchSpeed;
         }
 
         // 뛰기
         else if(grounded && Input.GetKey(sprintKey))
         {
             state = MovementState.sprinting;
-            moveSpeed = sprintSpeed;
+            desiredMoveSpeed = sprintSpeed;
         } 
         // 땅
         else if (grounded)
         {
             state = MovementState.walking;
-            moveSpeed = walkSpeed;
+            desiredMoveSpeed = walkSpeed;
         }
         // 공중
         else
@@ -149,10 +173,62 @@ public class PlayerMovement : MonoBehaviour
             state = MovementState.air;
         }
 
-
         // 경사면에선 중력값 끄기
-        rb.useGravity = !OnSlope();
+        //rb.useGravity = !OnSlope();
 
+
+        // 속도가 급격하게 바뀌는지 체크 (?)
+        if(Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 4f && moveSpeed != 0)
+        {
+            StopAllCoroutines();
+            StartCoroutine(SmoothlyLerpMoveSpeed());
+        }
+        else
+        {
+            moveSpeed = desiredMoveSpeed;
+        }
+
+        lastDesiredMoveSpeed = desiredMoveSpeed;
+    }
+
+    private IEnumerator SmoothlyLerpMoveSpeed()
+    {
+        // 부드럽게 속도 올리기
+        //float time = 0;
+        //float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
+        //float startValue = moveSpeed;
+
+        //while (time < difference)
+        //{
+        //    moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
+        //    time += Time.deltaTime;
+        //    yield return null;
+        //}
+
+        //moveSpeed = desiredMoveSpeed;
+
+        float time = 0;
+        float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
+        float startValue = moveSpeed;
+
+        while (time < difference)
+        {
+            moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
+
+            if (OnSlope())
+            {
+                float slopeAngle = Vector3.Angle(Vector3.up, slopeHit.normal);
+                float slopeAngleIncrease = 1 + (slopeAngle / 90f);
+
+                time += Time.deltaTime * speedIncreaseMultiplier * slopeIncreaseMultiplier * slopeAngleIncrease;
+            }
+            else
+                time += Time.deltaTime * speedIncreaseMultiplier;
+
+            yield return null;
+        }
+
+        moveSpeed = desiredMoveSpeed;
     }
 
     private void MovePlayer()
