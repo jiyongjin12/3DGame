@@ -27,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Keybins")] 
     public KeyCode jumpKey = KeyCode.Space;                 // Á¡ÇÁ
     public KeyCode sprintKey = KeyCode.LeftShift;           // ´Þ¸®±â
-    public KeyCode crouchKey = KeyCode.LeftControl;         // ¾É±â
+    public KeyCode crouchKey = KeyCode.C;         // ¾É±â
 
 
     [Header("Ground Check")]
