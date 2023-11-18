@@ -74,7 +74,7 @@ public class Sliding : MonoBehaviour
         else // 경사면 내려가기
         {
             rb.AddForce(pm.GetSlopeMoveDirection(inputDirection) * slideForce, ForceMode.Force);
-            //rb.AddForce(Vector3.down * 50f, ForceMode.Force);
+            rb.AddForce(Vector3.down * 50f, ForceMode.Force);
         } 
 
         if (slideTimer <= 0)

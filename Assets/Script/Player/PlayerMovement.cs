@@ -83,7 +83,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(desiredMoveSpeed);
 
         // 바닥 체크
         grounded = Physics.Raycast(transform.position, Vector3.down, PlayerHeight * 0.5f + 0.2f, WhatIsGround);
@@ -174,7 +173,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // 경사면에선 중력값 끄기
-        //rb.useGravity = !OnSlope();
+        rb.useGravity = !OnSlope();
 
 
         // 속도가 급격하게 바뀌는지 체크 (?)
