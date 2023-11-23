@@ -8,10 +8,15 @@ public class WallRunning : MonoBehaviour
     public LayerMask whatIsWall;
     public LayerMask whatIsGround;
     public float wallRunForce;
+    public float wallClimbSpeed;
     public float maxWallRunTime;
     private float wallRunTimer;
 
     [Header("Input")]
+    public KeyCode upwardsRunKey = KeyCode.LeftShift;
+    public KeyCode downwardsRunKey = KeyCode.LeftControl;
+    private bool upwardsRunning;
+    private bool downwardsRunning;
     private float horizontalInput;
     private float verticalInput;
 
@@ -65,6 +70,9 @@ public class WallRunning : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
+        upwardsRunning = Input.GetKey(upwardsRunKey);
+        downwardsRunning = Input.GetKey(downwardsRunKey);
+
         // Wallrunning
         if((wallLeft || wallRight) && verticalInput > 0 && AboveGround())
         {
@@ -98,13 +106,27 @@ public class WallRunning : MonoBehaviour
 
         Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
 
-        if((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
+        if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
         {
             wallForward = -wallForward;
         }
 
         // forward force
         rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+
+        // upwards/downwards force
+        if (upwardsRunning)
+        {
+            rb.velocity = new Vector3(rb.velocity.x, wallClimbSpeed, rb.velocity.z);
+        }
+        if (downwardsRunning)
+        {
+            rb.velocity = new Vector3(rb.velocity.x, -wallClimbSpeed, rb.velocity.z);
+        }
+
+        // push to wall force
+        if(!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput < 0))
+            rb.AddForce(-wallNormal * 100, ForceMode.Force);
     }
 
     private void StopWallRun()
