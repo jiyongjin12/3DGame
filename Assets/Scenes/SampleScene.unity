@@ -5102,7 +5102,7 @@ MonoBehaviour:
   walkSpeed: 4
   sprintSpeed: 8
   slideSpeed: 30
-  wallrunSpeed: 8.5
+  wallrunSpeed: 8
   speedIncreaseMultiplier: 1.5
   slopeIncreaseMultiplier: 2.5
   groundDrag: 4
