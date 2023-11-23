@@ -73,12 +73,13 @@ public class WallRunning : MonoBehaviour
             {
                 StartWallRun();
             }
-            else
+            
+        }
+        else
+        {
+            if (pm.wallrunning)
             {
-                if (pm.wallrunning)
-                {
-                    StopWallRun();
-                }
+                StopWallRun();
             }
         }
     }
@@ -96,6 +97,11 @@ public class WallRunning : MonoBehaviour
         Vector3 wallNormal = wallRight ? rightWallhit.normal : leftWallhit.normal;
 
         Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
+
+        if((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
+        {
+            wallForward = -wallForward;
+        }
 
         // forward force
         rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
