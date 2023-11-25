@@ -91,6 +91,16 @@ public class WallRunning : MonoBehaviour
                 StartWallRun();
             }
 
+            // 벽 타기 시간
+            if (wallRunTimer > 0)
+                wallRunTimer -= Time.deltaTime;
+
+            if(wallRunTimer <= 0 && pm.wallrunning)
+            {
+                exitingWall = true;
+                exitWallTimer = exitWallTime;
+            }
+
             // 벽 점프
             if (Input.GetKeyDown(jumpKey)) WallJump();
         }
@@ -119,6 +129,8 @@ public class WallRunning : MonoBehaviour
     private void StartWallRun()
     {
         pm.wallrunning = true;
+
+        wallRunTimer = maxWallRunTime;
     }
 
     private void WallRuningMovement()
