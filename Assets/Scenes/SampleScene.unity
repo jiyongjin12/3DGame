@@ -5163,6 +5163,9 @@ MonoBehaviour:
   wallRunForce: 200
   wallClimbSpeed: 3
   maxWallRunTime: 1.5
+  wallJumpUpForce: 7
+  wallJumpSideForce: 12
+  jumpKey: 32
   upwardsRunKey: 304
   downwardsRunKey: 306
   wallCheckDistance: 0.7
