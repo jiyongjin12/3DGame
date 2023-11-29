@@ -143,7 +143,7 @@ namespace Demo.Scripts.Runtime
             
             moveRotation = transform.rotation;
 
-            movementComponent = GetComponent<FPSMovement>();
+            //movementComponent = GetComponent<FPSMovement>();
             
             movementComponent.onStartMoving.AddListener(() => slotLayer.PlayMotion(onStartStopMoving));
             movementComponent.onStopMoving.AddListener(() => slotLayer.PlayMotion(onStartStopMoving));
