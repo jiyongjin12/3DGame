@@ -71,6 +71,9 @@ public class PlayerMovement : MonoBehaviour
         air
     }
 
+    public bool walking;
+    public bool sprinting;
+    public bool air;
     public bool sliding;
     public bool crouching;
     public bool wallrunning;

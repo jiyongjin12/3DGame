@@ -21,13 +21,12 @@ namespace Demo.Scripts.Runtime
         Crouching,
         Prone
     }
-    
+
     public class FPSMovement : MonoBehaviour
     {
         public delegate bool ConditionDelegate();
 
-        //[SerializeField] private FPSMovementSettings movementSettings;
-
+        [SerializeField] private FPSMovementSettings movementSettings;
         [SerializeField] public Transform rootBone;
 
         [SerializeField] public UnityEvent onStartMoving;
@@ -120,10 +119,10 @@ namespace Demo.Scripts.Runtime
 
         private bool TryJump()
         {
-            //if (!Input.GetKeyDown(movementSettings.jumpKey) || PoseState == FPSPoseState.Crouching)
-            //{
-            //    return false;
-            //}
+            if (!Input.GetKeyDown(movementSettings.jumpKey) || PoseState == FPSPoseState.Crouching)
+            {
+                return false;
+            }
 
             if (PoseState == FPSPoseState.Prone)
             {
@@ -142,18 +141,18 @@ namespace Demo.Scripts.Runtime
                 return false;
             }
 
-            //if (_inputDirection.y <= 0f || _inputDirection.x != 0f || !Input.GetKey(movementSettings.sprintKey))
-            //{
-            //    return false;
-            //}
+            if (_inputDirection.y <= 0f || _inputDirection.x != 0f || !Input.GetKey(movementSettings.sprintKey))
+            {
+                return false;
+            }
 
-            //if (Input.GetKey(movementSettings.slideKey) && GetSpeedRatio() > 0.5f)
-            //{
-            //    if (!CanSlide()) return false;
+            if (Input.GetKey(movementSettings.slideKey) && GetSpeedRatio() > 0.5f)
+            {
+                if (!CanSlide()) return false;
 
-            //    MovementState = FPSMovementState.Sliding;
-            //    return true;
-            //}
+                MovementState = FPSMovementState.Sliding;
+                return true;
+            }
 
             if (!CanSprint()) return false;
 
@@ -176,7 +175,7 @@ namespace Demo.Scripts.Runtime
             _animator.SetBool(Proning, true);
 
             onProneStarted?.Invoke();
-            //_desiredGait = movementSettings.prone;
+            _desiredGait = movementSettings.prone;
         }
 
         private void CancelProne()
@@ -187,19 +186,19 @@ namespace Demo.Scripts.Runtime
             _animator.SetBool(Proning, false);
 
             onProneEnded?.Invoke();
-            //_desiredGait = movementSettings.walking;
+            _desiredGait = movementSettings.walking;
         }
 
         private void Crouch()
         {
-            //float crouchedHeight = _originalHeight * movementSettings.crouchRatio;
-            //float heightDifference = _originalHeight - crouchedHeight;
+            float crouchedHeight = _originalHeight * movementSettings.crouchRatio;
+            float heightDifference = _originalHeight - crouchedHeight;
 
-            //_controller.height = crouchedHeight;
+            _controller.height = crouchedHeight;
 
             // Adjust the center position so the bottom of the capsule remains at the same position
             Vector3 crouchedCenter = _originalCenter;
-            //crouchedCenter.y -= heightDifference / 2;
+            crouchedCenter.y -= heightDifference / 2;
             _controller.center = crouchedCenter;
 
             PoseState = FPSPoseState.Crouching;
@@ -226,42 +225,42 @@ namespace Demo.Scripts.Runtime
                 return;
             }
 
-            //if (Input.GetKeyDown(movementSettings.proneKey))
-            //{
-            //    if (!CanProne())
-            //    {
-            //        return;
-            //    }
+            if (Input.GetKeyDown(movementSettings.proneKey))
+            {
+                if (!CanProne())
+                {
+                    return;
+                }
 
-            //    if (PoseState == FPSPoseState.Prone)
-            //    {
-            //        CancelProne();
-            //    }
-            //    else
-            //    {
-            //        EnableProne();
-            //    }
+                if (PoseState == FPSPoseState.Prone)
+                {
+                    CancelProne();
+                }
+                else
+                {
+                    EnableProne();
+                }
 
-            //    return;
-            //}
+                return;
+            }
 
-            //if (!Input.GetKeyDown(movementSettings.crouchKey))
-            //{
-            //    return;
-            //}
+            if (!Input.GetKeyDown(movementSettings.crouchKey))
+            {
+                return;
+            }
 
             if (PoseState == FPSPoseState.Standing)
             {
                 Crouch();
 
-                //_desiredGait = movementSettings.crouching;
+                _desiredGait = movementSettings.crouching;
                 return;
             }
 
             if (!CanUnCrouch()) return;
 
             UnCrouch();
-            //_desiredGait = movementSettings.walking;
+            _desiredGait = movementSettings.walking;
         }
 
         private void UpdateMovementState()
@@ -332,28 +331,28 @@ namespace Demo.Scripts.Runtime
             if (MovementState == FPSMovementState.Idle)
             {
                 float prevVelocity = _desiredGait.velocity;
-                //_desiredGait = movementSettings.idle;
+                _desiredGait = movementSettings.idle;
                 _desiredGait.velocity = prevVelocity;
                 return;
             }
 
             if (MovementState == FPSMovementState.InAir)
             {
-                //_velocity.y = movementSettings.jumpHeight;
+                _velocity.y = movementSettings.jumpHeight;
                 onJump.Invoke();
                 return;
             }
 
             if (MovementState == FPSMovementState.Sprinting)
             {
-                //_desiredGait = movementSettings.sprinting;
+                _desiredGait = movementSettings.sprinting;
                 onSprintStarted.Invoke();
                 return;
             }
 
             if (MovementState == FPSMovementState.Sliding)
             {
-                //_desiredGait.velocitySmoothing = movementSettings.slideDirectionSmoothing;
+                _desiredGait.velocitySmoothing = movementSettings.slideDirectionSmoothing;
                 _slideProgress = 0f;
                 _animator.CrossFade(Sliding, 0.1f);
                 onSlideStarted.Invoke();
@@ -363,35 +362,35 @@ namespace Demo.Scripts.Runtime
 
             if (PoseState == FPSPoseState.Crouching)
             {
-                //_desiredGait = movementSettings.crouching;
+                _desiredGait = movementSettings.crouching;
                 return;
             }
 
             if (PoseState == FPSPoseState.Prone)
             {
-                //_desiredGait = movementSettings.prone;
+                _desiredGait = movementSettings.prone;
                 return;
             }
 
             // Walking state
-            //_desiredGait = movementSettings.walking;
+            _desiredGait = movementSettings.walking;
         }
 
         private void UpdateSliding()
         {
             // 1. Extract the slide animation.
-            //float slideAmount = movementSettings.slideCurve.Evaluate(_slideProgress);
+            float slideAmount = movementSettings.slideCurve.Evaluate(_slideProgress);
 
             // 2. Apply sliding to both current and desired velocity vectors.
             // Here we just want to interpolate between the same velocities, but different directions.
 
-            //_velocity *= slideAmount;
+            _velocity *= slideAmount;
 
             Vector3 desiredVelocity = _velocity;
-            //desiredVelocity.y = -movementSettings.gravity;
+            desiredVelocity.y = -movementSettings.gravity;
             MoveVector = desiredVelocity;
 
-            //_slideProgress = Mathf.Clamp01(_slideProgress + Time.deltaTime * movementSettings.slideSpeed);
+            _slideProgress = Mathf.Clamp01(_slideProgress + Time.deltaTime * movementSettings.slideSpeed);
         }
 
         private void UpdateGrounded()
@@ -406,21 +405,21 @@ namespace Demo.Scripts.Runtime
 
             _velocity = desiredVelocity;
 
-            //desiredVelocity.y = -movementSettings.gravity;
+            desiredVelocity.y = -movementSettings.gravity;
             MoveVector = desiredVelocity;
         }
 
         private void UpdateInAir()
         {
             var normInput = _inputDirection.normalized;
-            //_velocity.y -= movementSettings.gravity * Time.deltaTime;
-            //_velocity.y = Mathf.Max(-movementSettings.maxFallVelocity, _velocity.y);
+            _velocity.y -= movementSettings.gravity * Time.deltaTime;
+            _velocity.y = Mathf.Max(-movementSettings.maxFallVelocity, _velocity.y);
 
             var desiredVelocity = rootBone.right * normInput.x + rootBone.forward * normInput.y;
             desiredVelocity *= _desiredGait.velocity;
 
-            //desiredVelocity = Vector3.Lerp(_velocity, desiredVelocity * movementSettings.airFriction,
-            //    FPSAnimLib.ExpDecayAlpha(movementSettings.airVelocity, Time.deltaTime));
+            desiredVelocity = Vector3.Lerp(_velocity, desiredVelocity * movementSettings.airFriction,
+                FPSAnimLib.ExpDecayAlpha(movementSettings.airVelocity, Time.deltaTime));
 
             desiredVelocity.y = _velocity.y;
             _velocity = desiredVelocity;
@@ -466,7 +465,7 @@ namespace Demo.Scripts.Runtime
             MovementState = FPSMovementState.Idle;
             PoseState = FPSPoseState.Standing;
 
-            //_desiredGait = movementSettings.walking;
+            _desiredGait = movementSettings.walking;
         }
 
         private void Update()

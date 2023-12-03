@@ -3447,7 +3447,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1061265560
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5492,7 +5492,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!54 &1863895338
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5561,6 +5561,9 @@ MonoBehaviour:
   maxSlopeAngle: 40
   orientation: {fileID: 1053489806}
   state: 0
+  walking: 0
+  sprinting: 0
+  air: 0
   sliding: 0
   crouching: 0
   wallrunning: 0
@@ -5914,6 +5917,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed2e60975b014a14bee2ee51f674b480, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movementSettings: {fileID: 11400000, guid: 7d33a2d0b337ad54e8d85db297de9b26, type: 2}
   rootBone: {fileID: 8361562516925552891}
   onStartMoving:
     m_PersistentCalls:
@@ -9517,30 +9521,14 @@ GameObject:
   - component: {fileID: 1481196066319359606}
   - component: {fileID: 2063906206}
   - component: {fileID: 8314422344643451379}
-  - component: {fileID: 8314422344643451378}
+  - component: {fileID: 8314422344643451380}
   m_Layer: 0
   m_Name: PlayerCharacter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!54 &8314422344643451378
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8314422344643451377}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_IsActive: 0
 --- !u!114 &8314422344643451379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9548,7 +9536,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8314422344643451377}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: df26268f5ef5e174293be45bbd647ea5, type: 3}
   m_Name: 
@@ -9575,9 +9563,28 @@ MonoBehaviour:
   maxSlopeAngle: 40
   orientation: {fileID: 0}
   state: 0
+  walking: 0
+  sprinting: 0
+  air: 0
   sliding: 0
   crouching: 0
   wallrunning: 0
+--- !u!54 &8314422344643451380
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8314422344643451377}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!4 &8361562516925552891
 Transform:
   m_ObjectHideFlags: 0
