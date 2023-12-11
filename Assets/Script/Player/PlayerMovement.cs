@@ -207,20 +207,6 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator SmoothlyLerpMoveSpeed()
     {
-        // 부드럽게 속도 올리기
-        //float time = 0;
-        //float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
-        //float startValue = moveSpeed;
-
-        //while (time < difference)
-        //{
-        //    moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
-        //    time += Time.deltaTime;
-        //    yield return null;
-        //}
-
-        //moveSpeed = desiredMoveSpeed;
-
         float time = 0;
         float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
         float startValue = moveSpeed;
@@ -243,6 +229,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         moveSpeed = desiredMoveSpeed;
+
+
     }
 
     private void MovePlayer()
